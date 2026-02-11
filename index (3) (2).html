@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eclipse TKG RP — Tokyo Ghoul Roleplay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@200;400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,500;0,700;1,300&family=Oswald:wght@200;400;700&family=IBM+Plex+Mono:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --blood:#8b0000;--crimson:#cc1a1a;--kagune:#ff2020;--kagune-glow:rgba(255,32,32,.4);
+  --void:#040404;--abyss:#080606;--surface:#0e0c0c;--card:#121010;--card-hover:#161313;
+  --bone:#d4c8b8;--ash:#8a7e72;--smoke:#5a524a;--faint:#2a2624;
+  --gold:#c9a84c;--quinque:#4a8fd4;--aogiri:#8b3fbf;--anteiku:#5a9e6f;--rosewald:#a83232;
+  --font-jp:'Noto Serif JP',serif;
+  --font-display:'Oswald',sans-serif;
+  --font-body:'Cormorant Garamond',serif;
+  --font-mono:'IBM Plex Mono',monospace;
+}
+html{scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:var(--blood) var(--void)}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--void)}
+::-webkit-scrollbar-thumb{background:var(--blood);border-radius:2px}
+body{background:var(--void);color:var(--bone);font-family:var(--font-body);overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--blood);color:#fff}
+
+/* ══════════════════════════════════
+   LOADER — KAKUGAN EYE + HEARTBEAT
+   ══════════════════════════════════ */
+#loader{position:fixed;inset:0;z-index:99999;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 1.2s cubic-bezier(.4,0,.2,1),visibility 1.2s}
+#loader.done{opacity:0;visibility:hidden;pointer-events:none}
+.eye-container{position:relative;width:130px;height:130px}
+.eye-outer{width:100%;height:100%;border-radius:50%;background:radial-gradient(circle,#0d0d0d 30%,#000 75%);border:2px solid #151515;position:relative;overflow:hidden;animation:eyeFloat 3s ease-in-out infinite}
+.eye-iris{position:absolute;inset:16%;border-radius:50%;background:radial-gradient(circle at 40% 40%,var(--kagune) 0%,var(--crimson) 40%,var(--blood) 65%,#1a0000 100%);animation:irisBeat 1s ease-in-out infinite}
+.eye-pupil{position:absolute;top:50%;left:50%;width:18px;height:28px;background:#000;border-radius:50%;transform:translate(-50%,-50%);animation:pupilContract 2s ease-in-out infinite}
+.eye-glare{position:absolute;top:25%;left:35%;width:8px;height:8px;background:rgba(255,255,255,.15);border-radius:50%;filter:blur(1px)}
+.eye-veins{position:absolute;inset:0;border-radius:50%;background:
+  radial-gradient(ellipse at 15% 20%,rgba(139,0,0,.4) 0%,transparent 35%),
+  radial-gradient(ellipse at 85% 75%,rgba(139,0,0,.3) 0%,transparent 30%),
+  radial-gradient(ellipse at 50% 10%,rgba(139,0,0,.25) 0%,transparent 25%);
+  animation:veinPulse 1s ease-in-out infinite}
+.eye-ring{position:absolute;inset:-8px;border-radius:50%;border:1px solid rgba(139,0,0,.15);animation:ringPulse 2s ease-in-out infinite}
+
+@keyframes eyeFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes irisBeat{0%,100%{filter:brightness(.8);transform:scale(1)}50%{filter:brightness(1.4);transform:scale(1.02)}}
+@keyframes pupilContract{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(.85)}}
+@keyframes veinPulse{0%,100%{opacity:.6}50%{opacity:1}}
+@keyframes ringPulse{0%,100%{opacity:.2;transform:scale(1)}50%{opacity:.5;transform:scale(1.05)}}
+
+.loader-title{font-family:var(--font-display);font-weight:700;font-size:1.1rem;letter-spacing:1em;color:var(--bone);margin-top:2rem;opacity:0;animation:fadeIn .6s .5s forwards}
+.loader-sub{font-family:var(--font-mono);font-size:.5rem;letter-spacing:.5em;color:var(--blood);margin-top:.5rem;opacity:0;animation:fadeIn .6s .8s forwards}
+.loader-progress{width:200px;height:1px;background:var(--faint);margin-top:1.5rem;border-radius:1px;overflow:hidden;opacity:0;animation:fadeIn .6s .5s forwards}
+.loader-progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--blood),var(--kagune));animation:progressFill 2.8s .5s ease-in-out forwards;box-shadow:0 0 10px var(--kagune)}
+.loader-percent{font-family:var(--font-mono);font-size:.6rem;letter-spacing:.2em;color:var(--smoke);margin-top:.8rem;opacity:0;animation:fadeIn .6s .5s forwards}
+
+@keyframes fadeIn{to{opacity:1}}
+@keyframes progressFill{to{width:100%}}
+
+/* ══════════════════════════════════
+   ATMOSPHERIC LAYERS
+   ══════════════════════════════════ */
+.grain{position:fixed;inset:0;pointer-events:none;z-index:9990;opacity:.03;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.vignette{position:fixed;inset:0;pointer-events:none;z-index:9989;background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.7) 100%)}
+canvas#bgCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+
+/* ══════════════════════════════════
+   NAVIGATION
+   ══════════════════════════════════ */
+nav{position:fixed;top:0;left:0;right:0;z-index:9000;padding:1.2rem 2.5rem;display:flex;justify-content:space-between;align-items:center;transition:all .5s cubic-bezier(.4,0,.2,1)}
+nav.scrolled{background:rgba(4,4,4,.95);backdrop-filter:blur(20px) saturate(1.2);border-bottom:1px solid rgba(139,0,0,.1);padding:.7rem 2.5rem}
+
+.nav-brand{display:flex;align-items:center;gap:.8rem;position:relative}
+.nav-eclipse{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--crimson);position:relative;overflow:hidden}
+.nav-eclipse::before{content:'';position:absolute;inset:3px;border-radius:50%;background:var(--crimson);clip-path:polygon(50% 0%,100% 0%,100% 100%,50% 100%);animation:moonPhase 4s ease-in-out infinite}
+@keyframes moonPhase{0%,100%{clip-path:polygon(50% 0%,100% 0%,100% 100%,50% 100%)}25%{clip-path:polygon(30% 0%,100% 0%,100% 100%,30% 100%)}50%{clip-path:polygon(0% 0%,100% 0%,100% 100%,0% 100%)}75%{clip-path:polygon(30% 0%,100% 0%,100% 100%,30% 100%)}}
+.nav-brand-text{font-family:var(--font-display);font-weight:700;font-size:.85rem;letter-spacing:.3em;color:var(--bone)}
+
+.nav-links{display:flex;gap:2rem;list-style:none}
+.nav-links a{font-family:var(--font-display);font-weight:200;font-size:.7rem;letter-spacing:.25em;color:var(--smoke);transition:all .4s;position:relative;padding-bottom:4px}
+.nav-links a::after{content:'';position:absolute;bottom:0;left:50%;width:0;height:1px;background:var(--crimson);transition:all .4s cubic-bezier(.23,1,.32,1);transform:translateX(-50%)}
+.nav-links a:hover{color:var(--bone)}
+.nav-links a:hover::after{width:100%}
+.nav-join{padding:.4rem 1.2rem !important;border:1px solid rgba(139,0,0,.3) !important;color:var(--crimson) !important;transition:all .3s !important}
+.nav-join:hover{background:var(--blood) !important;color:#fff !important;border-color:var(--blood) !important}
+
+.burger{display:none;flex-direction:column;gap:5px;cursor:pointer;z-index:9999;padding:5px}
+.burger span{width:22px;height:1.5px;background:var(--bone);transition:all .3s;transform-origin:center}
+.burger.active span:nth-child(1){transform:rotate(45deg) translate(4.5px,4.5px);background:var(--crimson)}
+.burger.active span:nth-child(2){opacity:0;transform:scaleX(0)}
+.burger.active span:nth-child(3){transform:rotate(-45deg) translate(4.5px,-4.5px);background:var(--crimson)}
+
+@media(max-width:900px){
+  nav{padding:1rem 1.5rem}
+  .burger{display:flex}
+  .nav-links{position:fixed;inset:0;background:rgba(0,0,0,.98);flex-direction:column;align-items:center;justify-content:center;gap:2.5rem;opacity:0;visibility:hidden;transition:all .5s cubic-bezier(.77,0,.175,1)}
+  .nav-links.open{opacity:1;visibility:visible}
+  .nav-links a{font-size:1.1rem;letter-spacing:.3em}
+}
+
+/* ══════════════════════════════════
+   HERO
+   ══════════════════════════════════ */
+#hero{min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.hero-glow{position:absolute;inset:0;background:
+  radial-gradient(ellipse at 25% 75%,rgba(139,0,0,.07) 0%,transparent 50%),
+  radial-gradient(ellipse at 75% 25%,rgba(75,30,120,.04) 0%,transparent 50%),
+  radial-gradient(ellipse at 50% 100%,rgba(139,0,0,.05) 0%,transparent 40%)}
+
+.hero-content{position:relative;z-index:2;text-align:center;padding:0 2rem;max-width:950px;will-change:transform,opacity}
+
+.hero-badge{display:inline-flex;align-items:center;gap:.8rem;padding:.45rem 1.5rem;border:1px solid rgba(139,0,0,.2);background:rgba(139,0,0,.03);margin-bottom:2rem;opacity:0;animation:heroReveal .8s 3.3s forwards}
+.hero-badge .pulse{width:5px;height:5px;border-radius:50%;background:var(--crimson);box-shadow:0 0 8px var(--kagune-glow);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+.hero-badge span{font-family:var(--font-mono);font-size:.5rem;letter-spacing:.5em;color:var(--smoke)}
+
+.hero-kanji{font-family:var(--font-jp);font-weight:900;font-size:clamp(5rem,18vw,14rem);line-height:.85;letter-spacing:-.03em;background:linear-gradient(180deg,var(--bone) 0%,rgba(212,200,184,.2) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;opacity:0;animation:heroReveal 1.2s 3.5s forwards;position:relative}
+.hero-kanji::after{content:'蝕';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(180deg,var(--kagune) 0%,transparent 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;opacity:0;animation:kanjiBurn 4s 4.5s ease-in-out forwards}
+@keyframes kanjiBurn{0%{opacity:0}15%{opacity:.3}30%{opacity:0}100%{opacity:0}}
+
+.hero-title{font-family:var(--font-display);font-weight:200;font-size:clamp(1rem,2.8vw,1.7rem);letter-spacing:.6em;color:var(--smoke);margin-top:.5rem;opacity:0;animation:heroReveal .8s 3.8s forwards}
+.hero-divider{width:60px;height:1px;background:linear-gradient(90deg,transparent,var(--blood),transparent);margin:2rem auto;opacity:0;animation:heroReveal .8s 4s forwards}
+.hero-quote{font-family:var(--font-body);font-style:italic;font-weight:300;font-size:clamp(.95rem,1.6vw,1.15rem);color:var(--ash);max-width:480px;margin:0 auto;line-height:1.8;opacity:0;animation:heroReveal .8s 4.1s forwards}
+.hero-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:2.5rem;opacity:0;animation:heroReveal .8s 4.4s forwards}
+
+@keyframes heroReveal{from{opacity:0;transform:translateY(25px)}to{opacity:1;transform:translateY(0)}}
+
+/* Scroll indicator */
+.scroll-ind{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.6rem;opacity:0;animation:heroReveal .8s 5s forwards}
+.scroll-ind .scroll-text{font-family:var(--font-mono);font-size:.45rem;letter-spacing:.5em;color:var(--smoke)}
+.scroll-ind .scroll-line{width:1px;height:30px;position:relative;overflow:hidden}
+.scroll-ind .scroll-line::after{content:'';position:absolute;top:-100%;left:0;width:100%;height:100%;background:linear-gradient(180deg,transparent,var(--crimson),transparent);animation:scrollDrop 2s ease-in-out infinite}
+@keyframes scrollDrop{0%{top:-100%}100%{top:100%}}
+
+/* ══════════════════════════════════
+   BUTTONS
+   ══════════════════════════════════ */
+.btn{font-family:var(--font-display);font-size:.8rem;letter-spacing:.2em;padding:.85rem 2rem;border:none;cursor:pointer;transition:all .4s cubic-bezier(.23,1,.32,1);display:inline-flex;align-items:center;gap:.5rem;position:relative;overflow:hidden}
+.btn::after{content:'';position:absolute;top:50%;left:50%;width:0;height:0;background:rgba(255,255,255,.05);border-radius:50%;transform:translate(-50%,-50%);transition:all .5s}
+.btn:hover::after{width:300px;height:300px}
+.btn-blood{background:linear-gradient(135deg,var(--blood),#6b0000);color:#fff;clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px))}
+.btn-blood:hover{background:linear-gradient(135deg,var(--crimson),var(--blood));box-shadow:0 5px 30px rgba(204,26,26,.25),0 0 60px rgba(139,0,0,.1);transform:translateY(-2px)}
+.btn-ghost{background:transparent;color:var(--ash);border:1px solid var(--faint)}
+.btn-ghost:hover{border-color:rgba(139,0,0,.4);color:var(--bone);box-shadow:0 0 25px rgba(139,0,0,.08);transform:translateY(-2px)}
+
+/* ══════════════════════════════════
+   SECTION BASE
+   ══════════════════════════════════ */
+.section{padding:8rem 2rem;position:relative;z-index:1}
+.section-inner{max-width:1100px;margin:0 auto}
+.tag{font-family:var(--font-mono);font-size:.55rem;letter-spacing:.5em;color:var(--crimson);display:flex;align-items:center;gap:1rem;margin-bottom:1.2rem}
+.tag::before{content:'';width:20px;height:1px;background:var(--crimson)}
+.stitle{font-family:var(--font-jp);font-weight:900;font-size:clamp(1.8rem,4.5vw,3rem);line-height:1.1;margin-bottom:1.2rem}
+.sdesc{font-weight:300;font-size:1.05rem;color:var(--ash);max-width:520px;line-height:1.9;margin-bottom:4rem}
+
+.divider{width:100%;height:1px;background:linear-gradient(90deg,transparent,rgba(139,0,0,.2),transparent)}
+
+/* ══════════════════════════════════
+   FEATURES STRIP (NEW)
+   ══════════════════════════════════ */
+#features-strip{padding:2.5rem 0;border-top:1px solid var(--faint);border-bottom:1px solid var(--faint);overflow:hidden;position:relative;z-index:1}
+.strip-track{display:flex;gap:4rem;animation:stripScroll 25s linear infinite;width:max-content}
+.strip-item{display:flex;align-items:center;gap:.8rem;white-space:nowrap}
+.strip-item .strip-dot{width:4px;height:4px;background:var(--crimson);border-radius:50%}
+.strip-item span{font-family:var(--font-display);font-size:.7rem;letter-spacing:.3em;color:var(--smoke)}
+@keyframes stripScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* ══════════════════════════════════
+   LORE — CINEMATIC TIMELINE
+   ══════════════════════════════════ */
+.timeline{position:relative;padding-left:4rem}
+.timeline::before{content:'';position:absolute;top:0;bottom:0;left:15px;width:1px;background:linear-gradient(180deg,transparent 0%,var(--blood) 10%,var(--blood) 90%,transparent 100%)}
+
+.tl-item{position:relative;margin-bottom:5rem;opacity:0;transform:translateY(30px);transition:all .9s cubic-bezier(.23,1,.32,1)}
+.tl-item.visible{opacity:1;transform:translateY(0)}
+.tl-item::before{content:'';position:absolute;left:-4rem;top:.6rem;width:6px;height:6px;border:1.5px solid var(--crimson);border-radius:50%;background:var(--void);z-index:2;transition:all .5s}
+.tl-item.visible::before{background:var(--crimson);box-shadow:0 0 15px var(--kagune-glow)}
+
+.tl-phase{font-family:var(--font-mono);font-size:.5rem;letter-spacing:.5em;color:var(--crimson);margin-bottom:.6rem;display:inline-block;padding:.15rem .6rem;border:1px solid rgba(139,0,0,.2);background:rgba(139,0,0,.03)}
+.tl-item h3{font-family:var(--font-display);font-weight:700;font-size:clamp(1.2rem,2.5vw,1.6rem);letter-spacing:.08em;margin-bottom:1rem;color:var(--bone)}
+.tl-item p{font-weight:300;color:var(--ash);line-height:1.9;font-size:.95rem;margin-bottom:.8rem}
+
+.tl-quote{margin-top:1.5rem;padding:1.5rem 2rem;border-left:2px solid var(--blood);background:linear-gradient(90deg,rgba(139,0,0,.04),transparent);font-style:italic;color:var(--ash);font-size:.9rem;line-height:1.8;position:relative}
+.tl-quote::before{content:'"';font-family:var(--font-jp);font-size:3rem;color:rgba(139,0,0,.15);position:absolute;top:-.5rem;left:.5rem;line-height:1}
+.tl-quote .tl-source{display:block;margin-top:.8rem;font-style:normal;font-family:var(--font-mono);font-size:.5rem;letter-spacing:.2em;color:var(--smoke)}
+
+@media(max-width:768px){.timeline{padding-left:2.5rem}.tl-item::before{left:-2.5rem}}
+
+/* ══════════════════════════════════
+   CLANS — HOVER REVEAL CARDS
+   ══════════════════════════════════ */
+.clans-subtitle{font-family:var(--font-mono);font-size:.5rem;letter-spacing:.5em;margin-bottom:1.5rem;padding:.3rem .8rem;display:inline-block;border:1px solid var(--faint)}
+.clans-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:1.2rem}
+
+.clan-card{background:var(--card);border:1px solid rgba(255,255,255,.03);position:relative;overflow:hidden;transition:all .6s cubic-bezier(.23,1,.32,1);cursor:default}
+.clan-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;transform:scaleX(0);transform-origin:left;transition:transform .6s cubic-bezier(.23,1,.32,1)}
+.clan-card:hover::before{transform:scaleX(1)}
+.clan-card:hover{transform:translateY(-6px);background:var(--card-hover);border-color:rgba(255,255,255,.05)}
+/* Ambient glow on hover */
+.clan-card::after{content:'';position:absolute;inset:0;opacity:0;transition:opacity .5s;pointer-events:none}
+.clan-card:hover::after{opacity:1}
+
+.clan-hojo::before{background:linear-gradient(90deg,var(--gold),transparent)}
+.clan-hojo::after{background:radial-gradient(ellipse at 50% 0%,rgba(201,168,76,.04),transparent 60%)}
+.clan-washuu::before{background:linear-gradient(90deg,var(--crimson),transparent)}
+.clan-washuu::after{background:radial-gradient(ellipse at 50% 0%,rgba(204,26,26,.04),transparent 60%)}
+.clan-mikami::before{background:linear-gradient(90deg,var(--quinque),transparent)}
+.clan-mikami::after{background:radial-gradient(ellipse at 50% 0%,rgba(74,143,212,.04),transparent 60%)}
+
+.clan-header{padding:2.2rem 2rem 1rem;position:relative}
+.clan-type{font-family:var(--font-mono);font-size:.45rem;letter-spacing:.5em;margin-bottom:.8rem;display:inline-block;padding:.2rem .6rem;border:1px solid var(--faint);color:var(--smoke)}
+.clan-status{position:absolute;top:2.2rem;right:2rem;font-family:var(--font-mono);font-size:.45rem;letter-spacing:.15em;padding:.2rem .5rem;display:flex;align-items:center;gap:.4rem}
+.status-open{color:var(--anteiku);border:1px solid rgba(90,158,111,.2)}
+.status-open::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--anteiku);animation:pulse 2s infinite}
+.clan-name{font-family:var(--font-display);font-weight:700;font-size:1.4rem;letter-spacing:.15em;margin-bottom:.3rem}
+.clan-motto{font-style:italic;font-weight:300;color:var(--smoke);font-size:.85rem}
+.clan-body{padding:0 2rem 2.2rem;font-weight:300;color:var(--ash);line-height:1.8;font-size:.88rem}
+.clan-tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:1.2rem}
+.clan-tag{padding:.2rem .6rem;border:1px solid var(--faint);font-family:var(--font-mono);font-size:.5rem;letter-spacing:.08em;color:var(--smoke);transition:all .4s}
+.clan-card:hover .clan-tag{border-color:rgba(139,0,0,.15);color:var(--ash)}
+
+/* ══════════════════════════════════
+   ORGANIZATIONS — FULL BLEED
+   ══════════════════════════════════ */
+.org-panel{display:grid;grid-template-columns:1fr 1.2fr;min-height:75vh;overflow:hidden;border-bottom:1px solid var(--faint);position:relative}
+.org-panel:nth-child(even){grid-template-columns:1.2fr 1fr}
+.org-panel:nth-child(even) .org-visual{order:2}
+.org-panel:nth-child(even) .org-text{order:1}
+
+.org-visual{position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--abyss)}
+.org-visual .org-kanji{font-family:var(--font-jp);font-weight:900;font-size:clamp(10rem,22vw,18rem);opacity:.03;position:absolute;user-select:none;transition:opacity .8s,transform .8s}
+.org-panel:hover .org-kanji{opacity:.06;transform:scale(1.05)}
+.org-visual .org-icon{font-size:4.5rem;position:relative;z-index:2;transition:transform .6s cubic-bezier(.23,1,.32,1);filter:grayscale(.2)}
+.org-panel:hover .org-icon{transform:scale(1.1)}
+.org-visual .org-glow{position:absolute;width:250px;height:250px;border-radius:50%;filter:blur(80px);opacity:0;transition:opacity .8s}
+.org-panel:hover .org-glow{opacity:1}
+.org-rosewald .org-glow{background:rgba(168,50,50,.15)}
+.org-anteiku .org-glow{background:rgba(90,158,111,.12)}
+.org-aogiri .org-glow{background:rgba(139,63,191,.12)}
+
+/* Scan line */
+.org-visual::after{content:'';position:absolute;top:-2px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(204,26,26,.3),transparent);animation:scanDown 6s linear infinite;opacity:.2}
+@keyframes scanDown{from{top:-2px}to{top:calc(100% + 2px)}}
+
+.org-text{display:flex;flex-direction:column;justify-content:center;padding:5rem 4rem}
+.org-text .org-label{font-family:var(--font-mono);font-size:.45rem;letter-spacing:.5em;color:var(--smoke);margin-bottom:.5rem}
+.org-text h3{font-family:var(--font-display);font-weight:700;font-size:clamp(1.5rem,3vw,2.2rem);letter-spacing:.12em;margin-bottom:.3rem}
+.org-text .org-sub{font-style:italic;font-weight:300;color:var(--ash);margin-bottom:1.8rem;font-size:.95rem}
+.org-text p{font-weight:300;color:var(--ash);line-height:1.9;font-size:.9rem;margin-bottom:.8rem}
+.org-tags{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:1rem}
+.otag{padding:.25rem .7rem;font-family:var(--font-mono);font-size:.5rem;letter-spacing:.1em;border:1px solid var(--faint);color:var(--smoke);transition:all .4s}
+.org-rosewald .otag{border-color:rgba(168,50,50,.2);color:rgba(168,50,50,.7)}
+.org-anteiku .otag{border-color:rgba(90,158,111,.2);color:rgba(90,158,111,.7)}
+.org-aogiri .otag{border-color:rgba(139,63,191,.2);color:rgba(139,63,191,.7)}
+.org-panel:hover .otag{border-color:rgba(255,255,255,.1)}
+
+@media(max-width:900px){
+  .org-panel,.org-panel:nth-child(even){grid-template-columns:1fr;min-height:auto}
+  .org-visual{min-height:280px;order:0 !important}
+  .org-text{padding:3rem 2rem;order:1 !important}
+}
+
+/* ══════════════════════════════════
+   RULES — TABBED SYSTEM
+   ══════════════════════════════════ */
+.rules-tabs{display:flex;gap:0;border-bottom:1px solid var(--faint);margin-bottom:3rem;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.rules-tabs::-webkit-scrollbar{height:0}
+.rtab{font-family:var(--font-display);font-size:.7rem;letter-spacing:.18em;padding:.9rem 1.5rem;color:var(--smoke);cursor:pointer;transition:all .3s;border:none;background:none;border-bottom:1.5px solid transparent;white-space:nowrap}
+.rtab:hover{color:var(--bone)}
+.rtab.active{color:var(--crimson);border-bottom-color:var(--crimson)}
+
+.rules-panel{display:none}
+.rules-panel.active{display:block;animation:panelIn .5s cubic-bezier(.23,1,.32,1)}
+@keyframes panelIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+.rules-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1rem}
+.rule-card{padding:1.8rem;background:var(--card);border:1px solid rgba(255,255,255,.02);transition:all .4s cubic-bezier(.23,1,.32,1);position:relative;overflow:hidden}
+.rule-card::before{content:'';position:absolute;top:0;left:0;width:0;height:1.5px;background:var(--crimson);transition:width .6s cubic-bezier(.23,1,.32,1)}
+.rule-card:hover{border-color:rgba(139,0,0,.1);transform:translateY(-3px);background:var(--card-hover);box-shadow:0 12px 35px rgba(0,0,0,.5)}
+.rule-card:hover::before{width:100%}
+.rule-card h4{font-family:var(--font-display);font-size:.85rem;letter-spacing:.12em;margin-bottom:.6rem;color:var(--bone)}
+.rule-card p{font-weight:300;font-size:.85rem;color:var(--ash);line-height:1.8}
+
+/* ══════════════════════════════════
+   FACTION CHOOSER
+   ══════════════════════════════════ */
+.choose-wrap{display:grid;grid-template-columns:1fr 1px 1fr;min-height:55vh;position:relative}
+.choose-side{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4rem 2rem;position:relative;overflow:hidden;cursor:pointer;transition:all .5s}
+.choose-side .choose-bg{position:absolute;inset:0;opacity:0;transition:opacity .6s}
+.choose-ghoul .choose-bg{background:radial-gradient(circle at center,rgba(204,26,26,.06),transparent 60%)}
+.choose-ccg .choose-bg{background:radial-gradient(circle at center,rgba(74,143,212,.06),transparent 60%)}
+.choose-side:hover .choose-bg{opacity:1}
+.choose-side .choose-kanji{font-family:var(--font-jp);font-weight:900;font-size:clamp(4rem,10vw,8rem);opacity:.04;position:absolute;user-select:none;transition:all .6s}
+.choose-side:hover .choose-kanji{opacity:.08;transform:scale(1.05)}
+.choose-side .choose-icon{font-size:3.5rem;margin-bottom:1.2rem;position:relative;z-index:2;transition:transform .5s cubic-bezier(.23,1,.32,1)}
+.choose-side:hover .choose-icon{transform:scale(1.15)}
+.choose-side .choose-name{font-family:var(--font-display);font-weight:700;font-size:1.2rem;letter-spacing:.25em;position:relative;z-index:2;transition:all .4s}
+.choose-ghoul:hover .choose-name{color:var(--crimson);text-shadow:0 0 30px var(--kagune-glow)}
+.choose-ccg:hover .choose-name{color:var(--quinque);text-shadow:0 0 30px rgba(74,143,212,.4)}
+.choose-side .choose-subtitle{font-family:var(--font-mono);font-size:.45rem;letter-spacing:.4em;color:var(--smoke);margin-top:.5rem;position:relative;z-index:2}
+.choose-mid{background:linear-gradient(180deg,transparent,rgba(139,0,0,.2),transparent);position:relative;display:flex;align-items:center;justify-content:center}
+.choose-mid span{font-family:var(--font-display);font-size:.65rem;letter-spacing:.4em;color:var(--smoke);background:var(--void);padding:.8rem 0;position:relative;z-index:2}
+
+@media(max-width:768px){
+  .choose-wrap{grid-template-columns:1fr;grid-template-rows:1fr auto 1fr}
+  .choose-side{min-height:30vh;padding:3rem 2rem}
+  .choose-mid{height:1px;width:100%;background:linear-gradient(90deg,transparent,rgba(139,0,0,.2),transparent)}
+  .choose-mid span{padding:0 .8rem}
+}
+
+/* ══════════════════════════════════
+   CTA FINAL
+   ══════════════════════════════════ */
+#cta{text-align:center}
+#cta .cta-kanji{font-family:var(--font-jp);font-weight:900;font-size:clamp(6rem,15vw,12rem);opacity:.03;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+
+/* ══════════════════════════════════
+   FOOTER
+   ══════════════════════════════════ */
+footer{border-top:1px solid var(--faint);padding:3rem 2rem}
+.footer-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr auto;align-items:center;gap:2rem}
+.footer-left .footer-brand{font-family:var(--font-jp);font-weight:900;font-size:1.5rem;color:var(--blood);letter-spacing:.05em;margin-bottom:.3rem}
+.footer-left .footer-copy{font-family:var(--font-mono);font-size:.5rem;letter-spacing:.1em;color:var(--smoke)}
+.footer-right{display:flex;gap:1.5rem;flex-wrap:wrap}
+.footer-right a{font-family:var(--font-display);font-size:.65rem;letter-spacing:.2em;color:var(--smoke);transition:color .3s}
+.footer-right a:hover{color:var(--crimson)}
+
+@media(max-width:768px){
+  .footer-inner{grid-template-columns:1fr;text-align:center}
+  .footer-right{justify-content:center}
+}
+
+/* ══════════════════════════════════
+   BOUTIQUE — RC CREDITS SHOP
+   ══════════════════════════════════ */
+.shop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem}
+@media(max-width:900px){.shop-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:550px){.shop-grid{grid-template-columns:1fr}}
+
+.shop-card{background:var(--card);border:1px solid rgba(255,255,255,.03);padding:0;position:relative;overflow:hidden;transition:all .5s cubic-bezier(.23,1,.32,1);cursor:default;display:flex;flex-direction:column}
+.shop-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--quinque),transparent);transform:scaleX(0);transition:transform .5s cubic-bezier(.23,1,.32,1)}
+.shop-card:hover{transform:translateY(-5px);border-color:rgba(74,143,212,.15);background:var(--card-hover)}
+.shop-card:hover::before{transform:scaleX(1)}
+.shop-card:hover .rc-crystal{transform:scale(1.08);filter:drop-shadow(0 0 20px rgba(74,143,212,.4))}
+.shop-card:hover .rc-orbs .orb{animation-play-state:running}
+.shop-card.featured{border-color:rgba(201,168,76,.15)}
+.shop-card.featured::before{background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.shop-card.featured:hover{border-color:rgba(201,168,76,.3)}
+
+.shop-visual{height:160px;display:flex;align-items:center;justify-content:center;position:relative;background:linear-gradient(180deg,rgba(74,143,212,.02),transparent);overflow:hidden}
+.shop-card.featured .shop-visual{background:linear-gradient(180deg,rgba(201,168,76,.03),transparent)}
+
+/* RC Crystal — Pure CSS art */
+.rc-crystal{position:relative;transition:all .6s cubic-bezier(.23,1,.32,1);z-index:2}
+.rc-crystal .crystal-body{width:0;height:0;border-left:20px solid transparent;border-right:20px solid transparent;border-bottom:45px solid rgba(74,143,212,.8);position:relative;filter:drop-shadow(0 0 8px rgba(74,143,212,.3))}
+.rc-crystal .crystal-body::after{content:'';position:absolute;top:100%;left:-20px;width:0;height:0;border-left:20px solid transparent;border-right:20px solid transparent;border-top:18px solid rgba(74,143,212,.6)}
+.rc-crystal .crystal-body::before{content:'';position:absolute;top:8px;left:-5px;width:10px;height:20px;background:rgba(255,255,255,.15);transform:rotate(15deg);border-radius:2px}
+/* Scale variants */
+.rc-sm .crystal-body{border-left-width:16px;border-right-width:16px;border-bottom-width:36px}
+.rc-sm .crystal-body::after{left:-16px;border-left-width:16px;border-right-width:16px;border-top-width:14px}
+.rc-md .crystal-body{border-left-width:22px;border-right-width:22px;border-bottom-width:50px}
+.rc-md .crystal-body::after{left:-22px;border-left-width:22px;border-right-width:22px;border-top-width:20px}
+.rc-lg .crystal-body{border-left-width:26px;border-right-width:26px;border-bottom-width:58px}
+.rc-lg .crystal-body::after{left:-26px;border-left-width:26px;border-right-width:26px;border-top-width:22px}
+.rc-xl .crystal-body{border-left-width:30px;border-right-width:30px;border-bottom-width:65px;border-bottom-color:rgba(201,168,76,.8)}
+.rc-xl .crystal-body::after{left:-30px;border-left-width:30px;border-right-width:30px;border-top-width:25px;border-top-color:rgba(201,168,76,.6)}
+
+/* Floating orbs around crystal */
+.rc-orbs{position:absolute;inset:0;pointer-events:none}
+.rc-orbs .orb{position:absolute;border-radius:50%;background:rgba(74,143,212,.3);animation-play-state:paused}
+.shop-card.featured .rc-orbs .orb{background:rgba(201,168,76,.3)}
+.orb-1{width:4px;height:4px;top:30%;left:20%;animation:orbFloat1 3s ease-in-out infinite}
+.orb-2{width:3px;height:3px;top:50%;right:25%;animation:orbFloat2 2.5s ease-in-out infinite .5s}
+.orb-3{width:5px;height:5px;bottom:30%;left:30%;animation:orbFloat3 3.5s ease-in-out infinite 1s}
+.orb-4{width:3px;height:3px;top:25%;right:30%;animation:orbFloat1 2.8s ease-in-out infinite .3s}
+@keyframes orbFloat1{0%,100%{transform:translateY(0) scale(1);opacity:.3}50%{transform:translateY(-12px) scale(1.3);opacity:.8}}
+@keyframes orbFloat2{0%,100%{transform:translate(0,0) scale(1);opacity:.2}50%{transform:translate(-8px,-10px) scale(1.2);opacity:.7}}
+@keyframes orbFloat3{0%,100%{transform:translateY(0) scale(.8);opacity:.3}50%{transform:translateY(-15px) scale(1.4);opacity:.6}}
+
+/* Multi-crystal cluster for bigger packs */
+.crystal-cluster{display:flex;gap:4px;align-items:flex-end}
+.crystal-cluster .crystal-body{opacity:.85}
+.crystal-cluster .mini{border-left-width:10px;border-right-width:10px;border-bottom-width:22px}
+.crystal-cluster .mini::after{left:-10px;border-left-width:10px;border-right-width:10px;border-top-width:8px}
+
+.shop-info{padding:1.2rem 1.5rem;flex:1;display:flex;flex-direction:column}
+.shop-credits{font-family:var(--font-display);font-weight:700;font-size:1.1rem;letter-spacing:.08em;color:var(--bone);margin-bottom:.2rem}
+.shop-amount{font-family:var(--font-mono);font-size:.5rem;letter-spacing:.15em;color:var(--smoke);margin-bottom:1rem}
+.shop-badge{display:inline-block;font-family:var(--font-mono);font-size:.45rem;letter-spacing:.2em;padding:.15rem .5rem;background:rgba(201,168,76,.1);color:var(--gold);border:1px solid rgba(201,168,76,.2);margin-bottom:.8rem;width:fit-content}
+.shop-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:1rem;border-top:1px solid var(--faint)}
+.shop-price{font-family:var(--font-display);font-weight:700;font-size:1.1rem;letter-spacing:.05em;color:var(--bone)}
+.shop-price .eur{font-weight:200;font-size:.7rem;color:var(--smoke);margin-left:.3rem}
+.btn-buy{font-family:var(--font-display);font-size:.65rem;letter-spacing:.2em;padding:.5rem 1.2rem;background:transparent;border:1px solid rgba(74,143,212,.3);color:var(--quinque);cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:.4rem}
+.btn-buy:hover{background:var(--quinque);color:#fff;border-color:var(--quinque);box-shadow:0 0 20px rgba(74,143,212,.2)}
+.shop-card.featured .btn-buy{border-color:rgba(201,168,76,.3);color:var(--gold)}
+.shop-card.featured .btn-buy:hover{background:var(--gold);color:#000;border-color:var(--gold);box-shadow:0 0 20px rgba(201,168,76,.2)}
+
+/* ══════════════════════════════════
+   PURCHASE MODAL
+   ══════════════════════════════════ */
+.modal-overlay{position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all .4s cubic-bezier(.23,1,.32,1);padding:2rem}
+.modal-overlay.show{opacity:1;visibility:visible}
+.modal-overlay.show .modal-box{transform:translateY(0) scale(1);opacity:1}
+.modal-box{background:var(--card);border:1px solid rgba(74,143,212,.15);max-width:420px;width:100%;padding:3rem 2.5rem;text-align:center;position:relative;transform:translateY(20px) scale(.95);opacity:0;transition:all .5s cubic-bezier(.23,1,.32,1) .1s}
+.modal-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--quinque),transparent)}
+.modal-close{position:absolute;top:1rem;right:1.2rem;background:none;border:none;color:var(--smoke);font-size:1.2rem;cursor:pointer;transition:color .3s;font-family:var(--font-display);letter-spacing:.1em;padding:.3rem}
+.modal-close:hover{color:var(--bone)}
+.modal-icon{font-size:2.5rem;margin-bottom:1rem}
+.modal-title{font-family:var(--font-display);font-weight:700;font-size:1.2rem;letter-spacing:.12em;margin-bottom:.5rem}
+.modal-pack{font-family:var(--font-mono);font-size:.6rem;letter-spacing:.15em;color:var(--quinque);margin-bottom:1.5rem}
+.modal-msg{font-weight:300;color:var(--ash);line-height:1.8;font-size:.95rem;margin-bottom:2rem}
+.modal-msg strong{color:var(--bone);font-weight:500}
+.btn-discord{font-family:var(--font-display);font-size:.8rem;letter-spacing:.15em;padding:.8rem 2rem;background:#5865F2;color:#fff;border:none;cursor:pointer;transition:all .3s;display:inline-flex;align-items:center;gap:.5rem}
+.btn-discord:hover{background:#4752c4;box-shadow:0 5px 25px rgba(88,101,242,.3);transform:translateY(-2px)}
+
+/* ══════════════════════════════════
+   REVEALS
+   ══════════════════════════════════ */
+.reveal{opacity:0;transform:translateY(35px);transition:opacity .9s cubic-bezier(.23,1,.32,1),transform .9s cubic-bezier(.23,1,.32,1)}
+.reveal.vis{opacity:1;transform:translateY(0)}
+.reveal-d1{transition-delay:.1s}.reveal-d2{transition-delay:.2s}.reveal-d3{transition-delay:.3s}
+
+/* ══════════════════════════════════
+   GLITCH
+   ══════════════════════════════════ */
+.glitch{position:relative;display:inline-block}
+.glitch::before,.glitch::after{content:attr(data-text);position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;pointer-events:none}
+.glitch:hover::before{animation:gl1 .3s;color:var(--kagune);opacity:.6}
+.glitch:hover::after{animation:gl2 .3s;color:var(--quinque);opacity:.6}
+@keyframes gl1{0%{clip-path:inset(20% 0 60% 0);transform:translate(-2px)}50%{clip-path:inset(50% 0 20% 0);transform:translate(2px)}100%{clip-path:inset(10% 0 70% 0);transform:translate(0)}}
+@keyframes gl2{0%{clip-path:inset(60% 0 10% 0);transform:translate(2px)}50%{clip-path:inset(20% 0 50% 0);transform:translate(-2px)}100%{clip-path:inset(70% 0 10% 0);transform:translate(0)}}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="vignette"></div>
+<canvas id="bgCanvas"></canvas>
+
+<!-- ═══════ LOADER ═══════ -->
+<div id="loader">
+  <div class="eye-container">
+    <div class="eye-ring"></div>
+    <div class="eye-outer">
+      <div class="eye-veins"></div>
+      <div class="eye-iris"></div>
+      <div class="eye-pupil"></div>
+      <div class="eye-glare"></div>
+    </div>
+  </div>
+  <div class="loader-title">ECLIPSE</div>
+  <div class="loader-sub">TOKYO GHOUL RP</div>
+  <div class="loader-progress"><div class="loader-progress-fill"></div></div>
+  <div class="loader-percent" id="loaderPercent">0%</div>
+</div>
+
+<!-- ═══════ NAV ═══════ -->
+<nav id="nav">
+  <a href="#hero" class="nav-brand">
+    <div class="nav-eclipse"></div>
+    <span class="nav-brand-text">ECLIPSE TKG</span>
+  </a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#lore" onclick="closeNav()">LORE</a></li>
+    <li><a href="#clans" onclick="closeNav()">CLANS</a></li>
+    <li><a href="#orgs" onclick="closeNav()">ORGANISATIONS</a></li>
+    <li><a href="#rules" onclick="closeNav()">RÈGLEMENT</a></li>
+    <li><a href="#boutique" onclick="closeNav()">BOUTIQUE</a></li>
+    <li><a href="#" class="nav-join" onclick="closeNav()">REJOINDRE</a></li>
+  </ul>
+  <div class="burger" id="burger" onclick="toggleNav()"><span></span><span></span><span></span></div>
+</nav>
+
+<!-- ═══════ HERO ═══════ -->
+<section id="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-content" id="heroContent">
+    <div class="hero-badge"><div class="pulse"></div><span>SERVEUR SERIOUS ROLEPLAY</span></div>
+    <h1 class="hero-kanji">蝕</h1>
+    <p class="hero-title">ECLIPSE — TOKYO GHOUL RP</p>
+    <div class="hero-divider"></div>
+    <p class="hero-quote">« À Tokyo, la faim n'est pas un instinct. C'est une loi. »</p>
+    <div class="hero-actions">
+      <a href="#lore" class="btn btn-blood">DÉCOUVRIR LE LORE</a>
+      <a href="#" class="btn btn-ghost">REJOINDRE LE SERVEUR</a>
+    </div>
+  </div>
+  <div class="scroll-ind"><span class="scroll-text">DÉFILER</span><div class="scroll-line"></div></div>
+</section>
+
+<!-- ═══════ FEATURES STRIP ═══════ -->
+<div id="features-strip">
+  <div class="strip-track" id="stripTrack">
+    <div class="strip-item"><div class="strip-dot"></div><span>RP SÉRIEUX</span></div>
+    <div class="strip-item"><div class="strip-dot"></div><span>UNIVERS SOMBRE</span></div>
+    <div class="strip-item"><div class="strip-dot"></div><span>ROLEPLAY NARRATIF</span></div>
+    <div class="strip-item"><div class="strip-dot"></div><span>HISTOIRE ÉVOLUTIVE</span></div>
+    <div class="strip-item"><div class="strip-dot"></div><span>CONSÉQUENCES RP</span></div>
+    <div class="strip-item"><div class="strip-dot"></div><span>FIDÈLE À L'ŒUVRE</span></div>
+    <div class="strip-item"><div class="strip-dot"></div><span>CLANS & FACTIONS</span></div>
+    <div class="strip-item"><div class="strip-dot"></div><span>EVENTS LIVE</span></div>
+  </div>
+</div>
+
+<!-- ═══════ LORE ═══════ -->
+<section id="lore" class="section">
+  <div class="section-inner">
+    <div class="tag reveal">// ARCHIVES CLASSIFIÉES</div>
+    <h2 class="stitle reveal glitch" data-text="Tokyo, 2015">Tokyo, 2015</h2>
+    <p class="sdesc reveal">L'année qui a brisé Tokyo de l'intérieur. Retour sur les événements qui ont tout changé.</p>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-phase">2015 — PHASE I</div>
+        <h3>L'Émergence</h3>
+        <p>L'année 2015 a marqué un moment des plus sinistre pour Tokyo. Dans l'ombre, hors des dossiers du CCG, un groupe de goules jamais vu auparavant a fait surface. Personne ne les avait identifiés, personne ne les attendait.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-phase">2015 — PHASE II</div>
+        <h3>L'Alliance Inattendue</h3>
+        <p>Ce groupe a réussi à rassembler plusieurs grandes organisations de goules, pourtant rivales depuis des années, autour d'un but commun : prendre le contrôle de Cochlea et bouleverser la société telle qu'elle était.</p>
+        <p>Quand les premiers combats ont commencé, Tokyo a plongé dans le chaos. Les rues sont devenues des zones de guerre, les quartiers des cimetières à ciel ouvert.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-phase">2015 — PHASE III</div>
+        <h3>Le Projet AEGIS-9</h3>
+        <p>Face à cette menace inouïe, le CCG a lancé ce qui allait devenir la décision la plus salvatrice pour Tokyo, mais aussi la plus controversée de son histoire : le Projet AEGIS-9.</p>
+        <p>Action Extensive de Guerre contre les Individus à Capacités Surnaturelles — un objectif simple : défendre Cochlea, peu importe le coût. Et le coût fut exorbitant.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-phase">2015 — ÉPILOGUE</div>
+        <h3>Le Prix du Sang</h3>
+        <p>Lorsque les combats ont cessé, un chiffre a choqué les hautes sphères japonaises : plus de 90 % des forces du CCG de Tokyo avaient disparu. Tokyo était encore debout, mais elle était brisée de l'intérieur.</p>
+        <div class="tl-quote">
+          C'était une victoire gravée dans le sang, payée par des familles, des épouses, des enfants.
+          <span class="tl-source">— ARCHIVES DU CCG, DOCUMENT CLASSIFIÉ</span>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-phase">AUJOURD'HUI</div>
+        <h3>L'Après</h3>
+        <p>Contre toute attente, Cochlea n'est pas tombée. Au prix de sacrifices inimaginables, le CCG a gagné la guerre. Les documents officiels parlent d'un succès stratégique. Mais ceux qui ont vécu ces jours sombres savent la vérité : Tokyo a survécu, mais son âme porte à jamais les cicatrices de 2015.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════ CLANS CCG ═══════ -->
+<section id="clans" class="section">
+  <div class="section-inner">
+    <div class="tag reveal">// LES CLANS DU CCG</div>
+    <h2 class="stitle reveal">Les Familles Fondatrices</h2>
+    <p class="sdesc reveal">Les grandes familles qui ont forgé l'histoire de la Commission de Contre-mesures contre les Goules.</p>
+
+    <div class="clans-subtitle reveal" style="color:var(--gold)">CLANS FONDATEURS</div>
+    <div class="clans-grid" style="margin-bottom:3rem">
+      <div class="clan-card clan-hojo reveal">
+        <div class="clan-header">
+          <div class="clan-type">FONDATEUR</div>
+          <span class="clan-status status-open">OUVERT</span>
+          <div class="clan-name">CLAN HOJO</div>
+          <div class="clan-motto">La chasse est un héritage</div>
+        </div>
+        <div class="clan-body">
+          Originaire d'Asie de l'Est, le Clan Hojo est une des familles centrales du CCG. Ce clan chasse les goules depuis plus d'un siècle, initialement via une organisation anti-goule non-gouvernementale fondée en 1899. Utilisant des méthodes traditionnelles, ils ont accumulé une grande expertise dans l'extermination des goules.
+          <div class="clan-tags"><span class="clan-tag">TRADITION CENTENAIRE</span><span class="clan-tag">MÉTHODES TRADITIONNELLES</span></div>
+        </div>
+      </div>
+      <div class="clan-card clan-washuu reveal reveal-d1">
+        <div class="clan-header">
+          <div class="clan-type">FONDATEUR</div>
+          <span class="clan-status status-open">OUVERT</span>
+          <div class="clan-name">CLAN WASHUU</div>
+          <div class="clan-motto">L'ombre derrière le trône</div>
+        </div>
+        <div class="clan-body">
+          Bien avant la création du CCG, le clan Washuu régnait déjà dans l'ombre du Japon. Garants de l'ordre, gardiens de l'humanité. Organisés comme une monarchie interne : la Garde Silencieuse, la Chambre Politique, et le Conseil. Au sein même du clan, seuls quelques élus connaissent la vérité.
+          <div class="clan-tags"><span class="clan-tag">RÈGNE SÉCULAIRE</span><span class="clan-tag">CULTURE DU SECRET</span><span class="clan-tag">MONARCHIE INTERNE</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="clans-subtitle reveal" style="color:var(--quinque)">CLAN PILIER</div>
+    <div class="clans-grid">
+      <div class="clan-card clan-mikami reveal">
+        <div class="clan-header">
+          <div class="clan-type">PILIER</div>
+          <span class="clan-status status-open">OUVERT</span>
+          <div class="clan-name">CLAN MIKAMI</div>
+          <div class="clan-motto">L'honneur forge la lame</div>
+        </div>
+        <div class="clan-body">
+          Une tradition de combat basée sur l'honneur et la discipline. En 1910, ils ont fondé une société secrète dédiée à la protection des humains. En 1950, intégrés au CCG en tant que conseillers stratégiques, contribuant au développement de nouvelles techniques de combat.
+          <div class="clan-tags"><span class="clan-tag">HONNEUR & DISCIPLINE</span><span class="clan-tag">CONSEILLERS STRATÉGIQUES</span><span class="clan-tag">FORMATION D'ÉLITE</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════ ORGANIZATIONS ═══════ -->
+<section id="orgs" class="section" style="padding:0">
+  <div class="section-inner" style="padding:8rem 2rem 4rem">
+    <div class="tag reveal">// LES ORGANISATIONS</div>
+    <h2 class="stitle reveal glitch" data-text="Choisis ton camp">Choisis ton camp — ou péris</h2>
+    <p class="sdesc reveal">À Tokyo, nul ne survit seul. Chaque organisation a ses lois, ses codes, ses sacrifices.</p>
+  </div>
+
+  <div class="org-panel org-rosewald reveal">
+    <div class="org-visual">
+      <div class="org-kanji">薔薇</div>
+      <div class="org-glow"></div>
+      <div class="org-icon">🌹</div>
+    </div>
+    <div class="org-text">
+      <div class="org-label">ORGANISATION DU GOÛT</div>
+      <h3>Clan Rosewald</h3>
+      <div class="org-sub">Élégant, élitiste, glacial.</div>
+      <p>Le Clan Rosewald représente l'aristocratie des goules. Derrière leurs magasins de viande clandestins se cache une organisation aussi raffinée que terrifiante.</p>
+      <p>Le Pacte du Goût régit leurs membres : une discipline de fer enrobée de velours. Chaque repas est une cérémonie, chaque chasse une œuvre d'art. Car les Rosewald ne tuent pas par faim — ils tuent par plaisir.</p>
+      <div class="org-tags"><span class="otag">RAFFINEMENT</span><span class="otag">ÉLITISME</span><span class="otag">CRUAUTÉ MESURÉE</span></div>
+    </div>
+  </div>
+
+  <div class="org-panel org-anteiku reveal">
+    <div class="org-visual">
+      <div class="org-kanji">珈琲</div>
+      <div class="org-glow"></div>
+      <div class="org-icon">☕</div>
+    </div>
+    <div class="org-text">
+      <div class="org-label">LE CAFÉ DES SILENCES</div>
+      <h3>Anteiku</h3>
+      <div class="org-sub">Calme, mélancolique, profondément humain.</div>
+      <p>Dans les ruelles tranquilles du 20ème arrondissement, un café ordinaire cache un refuge extraordinaire. L'Anteiku accueille ceux qui refusent de céder à leur nature monstrueuse.</p>
+      <p>Ici, les goules apprennent la discipline. La maîtrise de la faim. L'art de coexister avec l'humanité qu'ils sont condamnés à dévorer. C'est un havre, un sanctuaire — mais même la paix a un prix à Tokyo.</p>
+      <div class="org-tags"><span class="otag">DISCIPLINE</span><span class="otag">COMPASSION</span><span class="otag">RÉSISTANCE SILENCIEUSE</span></div>
+    </div>
+  </div>
+
+  <div class="org-panel org-aogiri reveal">
+    <div class="org-visual">
+      <div class="org-kanji">樹</div>
+      <div class="org-glow"></div>
+      <div class="org-icon">💀</div>
+    </div>
+    <div class="org-text">
+      <div class="org-label">L'ORDRE DE LA RUPTURE</div>
+      <h3>Aogiri</h3>
+      <div class="org-sub">Brutal, radical, sans compromis.</div>
+      <p>Là où d'autres se cachent, Aogiri attaque. Cette armée de goules a déclaré la guerre ouverte à l'humanité. Pour eux, la faim n'est pas une malédiction — c'est une force.</p>
+      <p>Chaque humain dévoré est un acte de rébellion, chaque inspecteur tué une victoire. Le chaos est leur doctrine. La violence, leur langage. Ils ne cherchent pas la coexistence — ils veulent la domination.</p>
+      <div class="org-tags"><span class="otag">VIOLENCE</span><span class="otag">RADICALISME</span><span class="otag">GUERRE TOTALE</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════ RULES ═══════ -->
+<section id="rules" class="section">
+  <div class="section-inner">
+    <div class="tag reveal">// RÈGLEMENT ABYSSAL</div>
+    <h2 class="stitle reveal">Les Lois de l'Éclipse</h2>
+    <p class="sdesc reveal">Le RP sérieux exige des règles strictes. Lisez-les, comprenez-les, respectez-les.</p>
+
+    <div class="rules-tabs reveal">
+      <button class="rtab active" data-tab="general">GÉNÉRAL</button>
+      <button class="rtab" data-tab="factions">FAMILLES & ORGS</button>
+      <button class="rtab" data-tab="food">NOURRITURE & CORPS</button>
+      <button class="rtab" data-tab="capture">CAPTURES</button>
+      <button class="rtab" data-tab="ccg">CCG & GOULES</button>
+    </div>
+
+    <div class="rules-panel active" id="tab-general">
+      <div class="rules-grid">
+        <div class="rule-card"><h4>HRP Vocal</h4><p>Tout échange hors-personnage doit se faire exclusivement en vocal Discord. Le chat vocal en jeu est réservé au RP uniquement, aucune conversation OOC n'y est tolérée.</p></div>
+        <div class="rule-card"><h4>Outils Vocaux</h4><p>Les modificateurs de voix sont autorisés tant qu'ils restent réalistes et n'altèrent pas la compréhension. Les voix robotiques ou absurdes sont interdites.</p></div>
+        <div class="rule-card"><h4>Pain RP</h4><p>Avant toute action hostile, vous devez clairement annoncer vos intentions à la cible. Un Pain RP permet à la victime de réagir de manière cohérente.</p></div>
+        <div class="rule-card"><h4>CarKill / PropsKill</h4><p>Utiliser un véhicule ou un objet du décor pour tuer un joueur est strictement interdit. Toute mort doit résulter d'une confrontation RP légitime.</p></div>
+        <div class="rule-card"><h4>RPQ / RPsex</h4><p>Les scènes à caractère sexuel sont totalement interdites sur le serveur, peu importe le contexte ou le consentement des joueurs impliqués.</p></div>
+        <div class="rule-card"><h4>Déconnexion en scène</h4><p>Se déconnecter pendant une scène RP active est interdit. Si vous devez partir, prévenez les autres joueurs et trouvez une excuse RP valable.</p></div>
+        <div class="rule-card"><h4>Block RP / Force RP</h4><p>Il est interdit d'empêcher un joueur de participer au RP ou de lui imposer des actions sans son consentement. Le RP doit toujours être collaboratif.</p></div>
+        <div class="rule-card"><h4>Freekill / Freeshot</h4><p>Tuer ou attaquer un joueur sans raison RP valide et sans Pain RP préalable entraîne des sanctions sévères.</p></div>
+        <div class="rule-card"><h4>NLR (New Life Rule)</h4><p>Après une mort RP, votre personnage oublie les circonstances de son décès et les 15 minutes précédentes. Vous ne pouvez pas vous venger ni retourner sur les lieux.</p></div>
+        <div class="rule-card"><h4>MetaGaming / StreamHack</h4><p>Utiliser des informations obtenues hors-jeu pour influencer vos actions en jeu est formellement interdit et sévèrement sanctionné.</p></div>
+        <div class="rule-card"><h4>Double Vocal</h4><p>Il est interdit d'être simultanément en vocal Discord et en vocal in-game pendant une scène RP. Choisissez un seul canal.</p></div>
+      </div>
+    </div>
+
+    <div class="rules-panel" id="tab-factions">
+      <div class="rules-grid">
+        <div class="rule-card"><h4>Limitation des clans</h4><p>Chaque clan a un nombre maximum de membres défini par le staff pour maintenir l'équilibre du serveur.</p></div>
+        <div class="rule-card"><h4>Bases secrètes</h4><p>L'emplacement de votre QG doit rester secret. Divulguer ces informations hors-RP est du métagaming.</p></div>
+        <div class="rule-card"><h4>Zones safe</h4><p>Certaines zones sont protégées : aucune agression n'y est autorisée. Elles servent de refuges neutres.</p></div>
+        <div class="rule-card"><h4>Règles QG</h4><p>Chaque quartier général possède ses propres règles internes. Les visiteurs doivent s'y conformer.</p></div>
+        <div class="rule-card"><h4>Assauts & conséquences</h4><p>Attaquer le QG d'une faction adverse nécessite l'accord du staff et entraîne des conséquences RP majeures.</p></div>
+        <div class="rule-card"><h4>Zones égouts</h4><p>Les égouts sont un territoire hostile avec des règles de combat spécifiques. La survie n'y est pas garantie.</p></div>
+        <div class="rule-card"><h4>Salle des piliers</h4><p>Zone sacrée et neutre où aucun combat n'est autorisé. Lieu des négociations entre factions.</p></div>
+      </div>
+    </div>
+
+    <div class="rules-panel" id="tab-food">
+      <div class="rules-grid">
+        <div class="rule-card"><h4>Manger en combat</h4><p>Strictement interdit de se nourrir pendant un affrontement actif. La régénération ne peut se faire qu'après le combat.</p></div>
+        <div class="rule-card"><h4>Vol de corps</h4><p>Récupérer un cadavre est possible uniquement avec un RP approprié. Vous devez jouer la scène et justifier vos intentions.</p></div>
+        <div class="rule-card"><h4>Corps animation</h4><p>Les corps générés lors des events sont la propriété du staff. Leur utilisation est soumise aux règles de l'event.</p></div>
+        <div class="rule-card"><h4>Events</h4><p>Lors des events, des règles spéciales peuvent s'appliquer. Elles priment sur les règles générales.</p></div>
+        <div class="rule-card"><h4>Switch d'armes</h4><p>En combat, vous êtes limité à un seul changement d'arme ou de forme de Kagune.</p></div>
+        <div class="rule-card"><h4>Interdictions de farm</h4><p>Le farm abusif de cellules RC ou de ressources est interdit. L'acquisition de puissance doit être progressive.</p></div>
+        <div class="rule-card"><h4>Fairplay combat</h4><p>Un combat doit être un échange, pas une exécution. Laissez à l'autre la chance de réagir.</p></div>
+        <div class="rule-card"><h4>Quinque et pertes RC</h4><p>Perdre son Quinque en combat a des conséquences RP importantes. L'arme peut être récupérée ou détruite.</p></div>
+      </div>
+    </div>
+
+    <div class="rules-panel" id="tab-capture">
+      <div class="rules-grid">
+        <div class="rule-card"><h4>Conditions de capture</h4><p>Une capture nécessite un RP valide et cohérent. Suivez le protocole approprié à votre faction.</p></div>
+        <div class="rule-card"><h4>Pain obligatoire</h4><p>Avant de menotter un joueur, annoncez clairement vos intentions. Le capturé peut tenter de fuir ou résister.</p></div>
+        <div class="rule-card"><h4>Interdiction renforts</h4><p>Pendant une capture active, il est interdit d'appeler des renforts par des moyens externes.</p></div>
+        <div class="rule-card"><h4>Pas d'échange otage</h4><p>Les échanges d'otages sont interdits sans validation du staff. Cela garantit des scénarios équilibrés.</p></div>
+      </div>
+    </div>
+
+    <div class="rules-panel" id="tab-ccg">
+      <div class="rules-grid">
+        <div class="rule-card"><h4>Barème captures</h4><p>Les inspecteurs gagnent des points selon le rang de la goule capturée. Chasse aux cibles importantes encouragée.</p></div>
+        <div class="rule-card"><h4>RC, Cochlée, RPK</h4><p>Les prisonniers à la Cochlée suivent un protocole strict. Interrogation, exécution ou recherche selon le CCG.</p></div>
+        <div class="rule-card"><h4>Patrouilles CCG</h4><p>Les patrouilles suivent des horaires et zones définies. Respectez votre secteur assigné sauf urgence.</p></div>
+        <div class="rule-card"><h4>Négociations</h4><p>Les négociations goules-CCG sont possibles mais rares. Elles impactent la réputation de chacun.</p></div>
+        <div class="rule-card"><h4>Racket</h4><p>Le racket est autorisé pour les goules avec un RP approprié. Pas de harcèlement, sommes raisonnables.</p></div>
+        <div class="rule-card"><h4>Jobs humains/goules</h4><p>Certains métiers sont réservés à certaines races. Un humain ne peut pas travailler à l'Anteiku.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════ FACTION CHOOSER ═══════ -->
+<section id="choose" class="section" style="padding:0">
+  <div class="section-inner" style="padding:8rem 2rem 3rem">
+    <div class="tag reveal">// CHOISIS TON DESTIN</div>
+    <h2 class="stitle reveal glitch" data-text="Goule ou Inspecteur ?">Goule ou Inspecteur ?</h2>
+    <p class="sdesc reveal">Deux mondes. Deux destins. Un seul choix.</p>
+  </div>
+  <div class="choose-wrap reveal">
+    <div class="choose-side choose-ghoul">
+      <div class="choose-bg"></div>
+      <div class="choose-kanji">喰種</div>
+      <div class="choose-icon">👁️</div>
+      <div class="choose-name">GOULE</div>
+      <div class="choose-subtitle">LA FAIM EST TA FORCE</div>
+    </div>
+    <div class="choose-mid"><span>VS</span></div>
+    <div class="choose-side choose-ccg">
+      <div class="choose-bg"></div>
+      <div class="choose-kanji">捜査</div>
+      <div class="choose-icon">⚔️</div>
+      <div class="choose-name">CCG</div>
+      <div class="choose-subtitle">L'ORDRE PAR LA LAME</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════ BOUTIQUE ═══════ -->
+<section id="boutique" class="section">
+  <div class="section-inner">
+    <div class="tag reveal">// BOUTIQUE RC</div>
+    <h2 class="stitle reveal glitch" data-text="Crédits RC">Crédits RC</h2>
+    <p class="sdesc reveal">Acquiers des crédits pour renforcer ton personnage. Chaque pack est un pas de plus vers la puissance.</p>
+
+    <div class="shop-grid">
+      <!-- 500 -->
+      <div class="shop-card reveal">
+        <div class="shop-visual">
+          <div class="rc-orbs"><div class="orb orb-1"></div><div class="orb orb-2"></div></div>
+          <div class="rc-crystal rc-sm"><div class="crystal-body"></div></div>
+        </div>
+        <div class="shop-info">
+          <div class="shop-credits">500 Crédits</div>
+          <div class="shop-amount">· 500 RC Credits</div>
+          <div class="shop-bottom">
+            <div class="shop-price">4.99<span class="eur">EUR</span></div>
+            <button class="btn-buy" onclick="openShopModal('500 Crédits','4.99 EUR')">ACHAT</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1250 -->
+      <div class="shop-card reveal reveal-d1">
+        <div class="shop-visual">
+          <div class="rc-orbs"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
+          <div class="rc-crystal"><div class="crystal-body"></div></div>
+        </div>
+        <div class="shop-info">
+          <div class="shop-credits">1.250 Crédits</div>
+          <div class="shop-amount">· 1.250 RC Credits</div>
+          <div class="shop-bottom">
+            <div class="shop-price">9.95<span class="eur">EUR</span></div>
+            <button class="btn-buy" onclick="openShopModal('1.250 Crédits','9.95 EUR')">ACHAT</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4000 -->
+      <div class="shop-card reveal reveal-d2">
+        <div class="shop-visual">
+          <div class="rc-orbs"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
+          <div class="rc-crystal rc-md">
+            <div class="crystal-cluster">
+              <div class="crystal-body mini"></div>
+              <div class="crystal-body"></div>
+              <div class="crystal-body mini"></div>
+            </div>
+          </div>
+        </div>
+        <div class="shop-info">
+          <div class="shop-credits">4.000 Crédits</div>
+          <div class="shop-amount">· 4.000 RC Credits</div>
+          <div class="shop-bottom">
+            <div class="shop-price">24.95<span class="eur">EUR</span></div>
+            <button class="btn-buy" onclick="openShopModal('4.000 Crédits','24.95 EUR')">ACHAT</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8500 FEATURED -->
+      <div class="shop-card featured reveal">
+        <div class="shop-visual">
+          <div class="rc-orbs"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div></div>
+          <div class="rc-crystal rc-md">
+            <div class="crystal-cluster">
+              <div class="crystal-body mini"></div>
+              <div class="crystal-body"></div>
+              <div class="crystal-body"></div>
+              <div class="crystal-body mini"></div>
+            </div>
+          </div>
+        </div>
+        <div class="shop-info">
+          <div class="shop-badge">PACK VEDETTE</div>
+          <div class="shop-credits">8.500 Crédits</div>
+          <div class="shop-amount">· 8.500 RC Credits</div>
+          <div class="shop-bottom">
+            <div class="shop-price">49.99<span class="eur">EUR</span></div>
+            <button class="btn-buy" onclick="openShopModal('8.500 Crédits','49.99 EUR')">ACHAT</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 18000 -->
+      <div class="shop-card reveal reveal-d1">
+        <div class="shop-visual">
+          <div class="rc-orbs"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div></div>
+          <div class="rc-crystal rc-lg">
+            <div class="crystal-cluster">
+              <div class="crystal-body mini"></div>
+              <div class="crystal-body"></div>
+              <div class="crystal-body"></div>
+              <div class="crystal-body mini"></div>
+            </div>
+          </div>
+        </div>
+        <div class="shop-info">
+          <div class="shop-credits">18.000 Crédits</div>
+          <div class="shop-amount">· 18.000 RC Credits</div>
+          <div class="shop-bottom">
+            <div class="shop-price">99.95<span class="eur">EUR</span></div>
+            <button class="btn-buy" onclick="openShopModal('18.000 Crédits','99.95 EUR')">ACHAT</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 28500 -->
+      <div class="shop-card featured reveal reveal-d2">
+        <div class="shop-visual">
+          <div class="rc-orbs"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div></div>
+          <div class="rc-crystal rc-xl">
+            <div class="crystal-cluster">
+              <div class="crystal-body mini"></div>
+              <div class="crystal-body"></div>
+              <div class="crystal-body"></div>
+              <div class="crystal-body"></div>
+              <div class="crystal-body mini"></div>
+            </div>
+          </div>
+        </div>
+        <div class="shop-info">
+          <div class="shop-credits">28.500 Crédits</div>
+          <div class="shop-amount">· 28.500 RC Credits</div>
+          <div class="shop-bottom">
+            <div class="shop-price">149.99<span class="eur">EUR</span></div>
+            <button class="btn-buy" onclick="openShopModal('28.500 Crédits','149.99 EUR')">ACHAT</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 40000 -->
+      <div class="shop-card featured reveal">
+        <div class="shop-visual">
+          <div class="rc-orbs"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div></div>
+          <div class="rc-crystal rc-xl">
+            <div class="crystal-cluster">
+              <div class="crystal-body mini"></div>
+              <div class="crystal-body mini"></div>
+              <div class="crystal-body"></div>
+              <div class="crystal-body"></div>
+              <div class="crystal-body"></div>
+              <div class="crystal-body mini"></div>
+            </div>
+          </div>
+        </div>
+        <div class="shop-info">
+          <div class="shop-credits">40.000 Crédits</div>
+          <div class="shop-amount">· 40.000 RC Credits</div>
+          <div class="shop-bottom">
+            <div class="shop-price">199.99<span class="eur">EUR</span></div>
+            <button class="btn-buy" onclick="openShopModal('40.000 Crédits','199.99 EUR')">ACHAT</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 63000 -->
+      <div class="shop-card featured reveal reveal-d1">
+        <div class="shop-visual">
+          <div class="rc-orbs"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div></div>
+          <div class="rc-crystal rc-xl">
+            <div class="crystal-cluster">
+              <div class="crystal-body mini"></div>
+              <div class="crystal-body"></div>
+              <div class="crystal-body"></div>
+              <div class="crystal-body"></div>
+              <div class="crystal-body"></div>
+              <div class="crystal-body mini"></div>
+              <div class="crystal-body mini"></div>
+            </div>
+          </div>
+        </div>
+        <div class="shop-info">
+          <div class="shop-credits">63.000 Crédits</div>
+          <div class="shop-amount">· 63.000 RC Credits</div>
+          <div class="shop-bottom">
+            <div class="shop-price">299.99<span class="eur">EUR</span></div>
+            <button class="btn-buy" onclick="openShopModal('63.000 Crédits','299.99 EUR')">ACHAT</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 100000 -->
+      <div class="shop-card featured reveal reveal-d2">
+        <div class="shop-visual">
+          <div class="rc-orbs"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div></div>
+          <div class="rc-crystal rc-xl">
+            <div class="crystal-cluster">
+              <div class="crystal-body mini"></div>
+              <div class="crystal-body mini"></div>
+              <div class="crystal-body"></div>
+              <div class="crystal-body"></div>
+              <div class="crystal-body"></div>
+              <div class="crystal-body"></div>
+              <div class="crystal-body mini"></div>
+              <div class="crystal-body mini"></div>
+            </div>
+          </div>
+        </div>
+        <div class="shop-info">
+          <div class="shop-badge">PACK ULTIME</div>
+          <div class="shop-credits">100.000 Crédits</div>
+          <div class="shop-amount">· 100.000 RC Credits</div>
+          <div class="shop-bottom">
+            <div class="shop-price">425.40<span class="eur">EUR</span></div>
+            <button class="btn-buy" onclick="openShopModal('100.000 Crédits','425.40 EUR')">ACHAT</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PURCHASE MODAL -->
+<div class="modal-overlay" id="shopModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeShopModal()">✕</button>
+    <div class="modal-icon">🔮</div>
+    <div class="modal-title">ACHAT DE CRÉDITS</div>
+    <div class="modal-pack" id="modalPack">—</div>
+    <div class="modal-msg">
+      Merci pour ton intérêt !<br><br>
+      Pour finaliser l'achat de ton pack <strong id="modalPackName">—</strong> au prix de <strong id="modalPackPrice">—</strong>, merci de <strong>nous contacter directement sur le serveur Discord</strong>.<br><br>
+      Un membre du staff te guidera pour compléter ta commande en toute sécurité.
+    </div>
+    <a href="https://discord.gg/kV5aSCpxxY" target="_blank" class="btn-discord">
+      <svg width="16" height="12" viewBox="0 0 71 55" fill="currentColor"><path d="M60.1 4.9A58.5 58.5 0 0045.4.2a.2.2 0 00-.2.1 40.8 40.8 0 00-1.8 3.7 54 54 0 00-16.2 0A37.4 37.4 0 0025.4.3a.2.2 0 00-.2-.1A58.4 58.4 0 0010.5 5 59.6 59.6 0 00.4 45a.3.3 0 00.1.2 58.9 58.9 0 0017.7 9 .2.2 0 00.3-.1 42 42 0 003.6-5.9.2.2 0 00-.1-.3 38.8 38.8 0 01-5.5-2.6.2.2 0 01 0-.4l1.1-.9a.2.2 0 01.2 0 42 42 0 0035.8 0 .2.2 0 01.2 0l1.1.9a.2.2 0 010 .3 36.4 36.4 0 01-5.5 2.7.2.2 0 00-.1.3 47.2 47.2 0 003.6 5.9.2.2 0 00.3.1A58.7 58.7 0 0070.5 45a.2.2 0 00.1-.2c1.6-16.7-2.7-31.2-11.5-44zM23.7 36.8c-3.8 0-7-3.5-7-7.8s3.1-7.8 7-7.8 7.1 3.5 7 7.8c0 4.3-3.1 7.8-7 7.8zm25.9 0c-3.9 0-7-3.5-7-7.8s3-7.8 7-7.8 7 3.5 7 7.8-3.1 7.8-7 7.8z"/></svg>
+      OUVRIR DISCORD
+    </a>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ═══════ CTA ═══════ -->
+<section id="cta" class="section reveal" style="text-align:center;padding:10rem 2rem;position:relative">
+  <div class="cta-kanji">蝕</div>
+  <div class="tag" style="justify-content:center">// REJOINDRE L'ÉCLIPSE</div>
+  <h2 class="stitle" style="text-align:center;font-size:clamp(2rem,5vw,3.5rem)">Prêt à écrire ton histoire ?</h2>
+  <p class="sdesc" style="text-align:center;margin:1.5rem auto 3rem;max-width:460px">Rejoins le serveur Tokyo Ghoul RP le plus immersif de Roblox. Ton destin commence maintenant.</p>
+  <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+    <a href="#" class="btn btn-blood">JOUER MAINTENANT</a>
+    <a href="https://discord.gg/kV5aSCpxxY" class="btn btn-ghost" target="_blank">DISCORD</a>
+  </div>
+</section>
+
+<!-- ═══════ FOOTER ═══════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-left">
+      <div class="footer-brand">蝕</div>
+      <div class="footer-copy">ECLIPSE TKG RP © 2026 — Fan-made Tokyo Ghoul Roleplay</div>
+    </div>
+    <div class="footer-right">
+      <a href="#hero">Accueil</a>
+      <a href="#lore">Lore</a>
+      <a href="#clans">Clans</a>
+      <a href="#orgs">Organisations</a>
+      <a href="#rules">Règlement</a>
+      <a href="#boutique">Boutique</a>
+      <a href="https://discord.gg/kV5aSCpxxY" target="_blank">Discord</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ═══════ LOADER WITH PERCENT ═══════
+(function(){
+  const el=document.getElementById('loaderPercent');
+  let p=0;
+  const iv=setInterval(()=>{p+=Math.random()*4;if(p>=100){p=100;clearInterval(iv);setTimeout(()=>document.getElementById('loader').classList.add('done'),400)}el.textContent=Math.floor(p)+'%'},50);
+})();
+
+// ═══════ BACKGROUND CANVAS — FLOATING PARTICLES ═══════
+(function(){
+  const c=document.getElementById('bgCanvas'),ctx=c.getContext('2d');
+  let W,H;
+  function resize(){W=c.width=innerWidth;H=c.height=innerHeight}
+  resize();addEventListener('resize',resize);
+
+  class Particle{
+    constructor(){this.reset(true)}
+    reset(init){
+      this.x=Math.random()*W;
+      this.y=init?Math.random()*H:H+10;
+      this.size=.5+Math.random()*2;
+      this.speed=.2+Math.random()*.8;
+      this.opacity=.02+Math.random()*.06;
+      this.drift=(Math.random()-.5)*.3;
+      this.color=Math.random()>.7?'139,0,0':'100,20,20';
+    }
+    update(){
+      this.y-=this.speed;
+      this.x+=this.drift+Math.sin(this.y*.005)*.2;
+      if(this.y<-10)this.reset(false);
+    }
+    draw(){
+      ctx.beginPath();
+      ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+      ctx.fillStyle=`rgba(${this.color},${this.opacity})`;
+      ctx.fill();
+    }
+  }
+
+  // Blood rain drops
+  class Drop{
+    constructor(){this.reset()}
+    reset(){this.x=Math.random()*W;this.y=-Math.random()*H;this.len=10+Math.random()*30;this.speed=2+Math.random()*5;this.opacity=.015+Math.random()*.035;this.w=.5+Math.random()*.5}
+    update(){this.y+=this.speed;if(this.y>H+this.len)this.reset()}
+    draw(){ctx.beginPath();ctx.moveTo(this.x,this.y);ctx.lineTo(this.x,this.y+this.len);ctx.strokeStyle=`rgba(139,0,0,${this.opacity})`;ctx.lineWidth=this.w;ctx.stroke()}
+  }
+
+  const particles=Array.from({length:60},()=>new Particle());
+  const drops=Array.from({length:40},()=>new Drop());
+
+  function animate(){
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(p=>{p.update();p.draw()});
+    drops.forEach(d=>{d.update();d.draw()});
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+
+// ═══════ NAV ═══════
+function toggleNav(){document.getElementById('burger').classList.toggle('active');document.getElementById('navLinks').classList.toggle('open')}
+function closeNav(){document.getElementById('burger').classList.remove('active');document.getElementById('navLinks').classList.remove('open')}
+addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',scrollY>50));
+
+// ═══════ STRIP DUPLICATION ═══════
+(function(){
+  const track=document.getElementById('stripTrack');
+  track.innerHTML+=track.innerHTML;
+})();
+
+// ═══════ HERO PARALLAX ═══════
+(function(){
+  const hero=document.getElementById('heroContent');
+  addEventListener('scroll',()=>{
+    if(scrollY<innerHeight){
+      hero.style.transform=`translateY(${scrollY*.12}px)`;
+      hero.style.opacity=1-scrollY/(innerHeight*.7);
+    }
+  });
+})();
+
+// ═══════ SCROLL REVEAL ═══════
+const revObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('vis');revObs.unobserve(e.target)}})
+},{threshold:.08,rootMargin:'0px 0px -30px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>revObs.observe(el));
+
+// ═══════ TIMELINE REVEAL ═══════
+const tlObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');tlObs.unobserve(e.target)}})
+},{threshold:.12});
+document.querySelectorAll('.tl-item').forEach(el=>tlObs.observe(el));
+
+// ═══════ RULES TABS ═══════
+document.querySelectorAll('.rtab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.rtab').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.rules-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ═══════ SHOP MODAL ═══════
+function openShopModal(pack,price){
+  document.getElementById('modalPack').textContent=pack+' — '+price;
+  document.getElementById('modalPackName').textContent=pack;
+  document.getElementById('modalPackPrice').textContent=price;
+  document.getElementById('shopModal').classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function closeShopModal(){
+  document.getElementById('shopModal').classList.remove('show');
+  document.body.style.overflow='';
+}
+document.getElementById('shopModal').addEventListener('click',e=>{
+  if(e.target===e.currentTarget)closeShopModal();
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeShopModal()});
+
+// ═══════ SMOOTH SCROLL ═══════
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault();
+    const t=document.querySelector(a.getAttribute('href'));
+    if(t)t.scrollIntoView({behavior:'smooth'});
+    closeNav();
+  });
+});
+</script>
+</body>
+</html>
